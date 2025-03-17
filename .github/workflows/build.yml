@@ -1,0 +1,35 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+        
+    - name: List directory contents (for debugging)
+      run: ls -la
+        
+    - name: Restore dependencies
+      # Specify the path to your .sln or .csproj file
+      run: dotnet restore SentimentAnalysisTool.sln
+      # If your solution is in a subdirectory, use:
+      # run: dotnet restore src/SentimentAnalysisTool.sln
+      
+    - name: Build
+      # Also specify the path here
+      run: dotnet build SentimentAnalysisTool.sln --no-restore
+      
+    - name: Test
+      run: dotnet test SentimentAnalysisTool.sln --no-build --verbosity normal 
